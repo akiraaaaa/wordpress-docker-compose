@@ -1,0 +1,47 @@
+version: '3'
+
+## choose wp version
+## https://hub.docker.com/_/wordpress/
+##
+##
+## choose db version
+## https://hub.docker.com/_/mysql/
+## or
+## https://hub.docker.com/_/mariadb
+##
+## see
+## https://github.com/docker-library/docs/tree/master/wordpress
+
+
+services:
+  wp:
+    image: wordpress:4.9.2
+    depends_on:
+      - wpdb
+    volumes:
+      - ./wordpress:/var/www/html
+    ports:
+      - "8000:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: wpdb
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+  wpdb:
+    image: mysql:5.7
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+  wpcli:
+    image: wordpress:cli
+    volumes:
+      - ./wordpress:/var/www/html
+    links:
+      - wpdb:mysql
